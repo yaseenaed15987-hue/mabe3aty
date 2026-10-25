@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1769e0">
+<title>مبيعاتي | برنامج المبيعات</title>
+<style>
+:root{--blue:#1769e0;--blue2:#eaf2ff;--ink:#17243a;--muted:#66758b;--line:#e3eaf3;--bg:#f4f7fb;--white:#fff;--red:#c73737;--green:#13845b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif}
+button,input{font:inherit}
+select{font:inherit;width:100%;padding:11px 12px;border:1px solid #d5deeb;border-radius:10px;background:#fff;color:var(--ink)}
+#authScreen{min-height:100vh;display:grid;place-items:center;padding:18px;background:linear-gradient(145deg,#eaf2ff,#f7faff)}
+.auth-card{width:min(100%,430px);background:white;border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 15px 45px #18365b12}
+.auth-card h1{margin-bottom:8px}.auth-card .btn{width:100%;margin-top:8px}
+.auth-note{font-size:12px;line-height:1.7;color:#72580a;background:#fff8df;padding:11px;border-radius:10px;margin-top:14px}
+button{cursor:pointer}
+.app{max-width:1250px;margin:auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--white);padding:16px 20px;border:1px solid var(--line);border-radius:18px;margin-bottom:16px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:14px;background:var(--blue);color:white;display:grid;place-items:center;font-size:25px;font-weight:bold}
+h1{font-size:22px;margin:0 0 4px}
+.sub{font-size:13px;color:var(--muted)}
+.status{background:#e7f8ef;color:var(--green);padding:8px 11px;border-radius:20px;font-size:12px;white-space:nowrap}
+.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:16px}
+.tab{border:1px solid var(--line);background:white;border-radius:12px;padding:11px 16px;color:var(--ink);white-space:nowrap}
+.tab.active{background:var(--blue);color:white;border-color:var(--blue)}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.metric,.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:16px}
+.metric .label{color:var(--muted);font-size:13px}
+.metric .value{font-size:24px;font-weight:bold;margin-top:10px;overflow-wrap:anywhere}
+.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(290px,.8fr);gap:16px}
+.panel h2{font-size:18px;margin:0 0 14px}
+.row{display:flex;align-items:center;gap:8px}
+.between{justify-content:space-between}
+input{width:100%;min-width:0;padding:11px 12px;border:1px solid #d5deeb;border-radius:10px;background:#fff;color:var(--ink);outline:none}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #1769e018}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.field label{font-size:13px;color:var(--muted)}
+.btn{border:0;border-radius:10px;padding:11px 14px;background:var(--blue);color:white;font-weight:bold}
+.btn.secondary{background:var(--blue2);color:var(--blue)}
+.btn.danger{background:#fff0f0;color:var(--red)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.product{border:1px solid var(--line);border-radius:13px;padding:13px;display:flex;flex-direction:column;gap:9px;min-width:0}
+.product-name{font-weight:bold;overflow-wrap:anywhere}
+.small{font-size:12px;color:var(--muted)}
+.price{color:var(--blue);font-weight:bold}
+.product .btn{width:100%;padding:9px}
+.cart-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.cart-item{display:flex;justify-content:space-between;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px}
+.cart-item .info{min-width:0}
+.cart-item .info div{overflow-wrap:anywhere}
+.qty{display:flex;align-items:center;gap:7px}
+.qty button{width:30px;height:30px;border:1px solid var(--line);background:white;border-radius:8px}
+.total{border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;font-size:18px;font-weight:bold;margin-bottom:12px}
+.hidden{display:none!important}
+body.locked{overflow:hidden}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:420px}
+th,td{text-align:right;padding:12px 9px;border-bottom:1px solid var(--line);font-size:13px}
+th{color:var(--muted);font-weight:normal;background:#f8faff}
+.empty{text-align:center;color:var(--muted);padding:25px 8px}
+.notice{background:#fff8df;color:#72580a;padding:12px;border-radius:12px;font-size:12px;line-height:1.7;margin-top:14px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(max-width:760px){.app{padding:10px}header{padding:13px}.layout{grid-template-columns:1fr}.metrics{gap:8px}.metric{padding:12px}.metric .value{font-size:19px}.metric .label{font-size:11px}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.status{display:none}}
+@media(min-width:761px){.products{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1769e0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="icon-192.png" type="image/png">
+
+</head>
+<body>
+<div id="authOverlay" style="position:fixed;inset:0;z-index:9999;background:#eef4ff;display:flex;align-items:center;justify-content:center;padding:18px">
+  <div class="panel" style="width:min(100%,420px);box-shadow:0 18px 60px #17243a20">
+    <div class="brand" style="margin-bottom:18px"><div class="logo">م</div><div><h1>مبيعاتي</h1><div class="sub" id="authSubtitle">إعداد حماية البرنامج</div></div></div>
+    <p id="authMessage" class="small">أنشئ اسم مستخدم وكلمة مرور للدخول إلى البرنامج.</p>
+    <form id="authForm">
+      <div class="field"><label for="authUsername">اسم المستخدم</label><input id="authUsername" required autocomplete="username" minlength="3"></div>
+      <div class="field"><label for="authPassword">كلمة المرور</label><input id="authPassword" type="password" required autocomplete="current-password" minlength="8"></div>
+      <div class="field hidden" id="authConfirmWrap"><label for="authConfirm">تأكيد كلمة المرور</label><input id="authConfirm" type="password" autocomplete="new-password" minlength="8"></div>
+      <button class="btn" id="authSubmit" type="submit" style="width:100%">إنشاء حساب المدير</button>
+    </form>
+    <p class="small" style="margin-top:14px">استخدم كلمة مرور لا تقل عن 8 أحرف. لا تنسَ بيانات الدخول.</p>
+  </div>
+</div>
+<div class="app">
+<header>
+  <div class="brand"><div class="logo">م</div><div><h1>مبيعاتي</h1><div class="sub">إدارة المبيعات والمخزون بسهولة</div></div></div>
+  <div class="row"><div class="status">● النسخة التجريبية تعمل</div><button class="btn secondary" id="lockApp" type="button">قفل البرنامج</button></div>
+</header>
+
+<nav class="tabs" aria-label="أقسام البرنامج">
+  <button class="tab active" data-view="sales">الرئيسية والكاشير</button>
+  <button class="tab" data-view="products">المنتجات والمخزون</button>
+  <button class="tab" data-view="history">سجل الفواتير</button>
+  <button class="tab" data-view="accounts">الحسابات والتقارير</button>
+  <button class="tab" data-view="settings">الإعدادات والأمان</button>
+</nav>
+
+<section class="panel" style="margin-bottom:16px">
+  <h2>القائمة الرئيسية</h2>
+  <div class="products" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
+    <button class="product" data-go="sales" style="text-align:right;background:#fff;color:inherit"><span style="font-size:25px">🧾</span><strong>شاشة البيع والكاشير</strong><span class="small">بيع المنتجات، الخصم، الدفع، والباقي وطباعة الفاتورة</span></button>
+    <button class="product" data-go="products" style="text-align:right;background:#fff;color:inherit"><span style="font-size:25px">📦</span><strong>إدارة المنتجات والمخزون</strong><span class="small">إضافة المنتجات والأسعار والكميات ومتابعة النواقص</span></button>
+    <button class="product" data-go="accounts" style="text-align:right;background:#fff;color:inherit"><span style="font-size:25px">📊</span><strong>الحسابات والتقارير</strong><span class="small">المبيعات والأرباح التقديرية والمصروفات والديون</span></button>
+    <button class="product" data-go="history" style="text-align:right;background:#fff;color:inherit"><span style="font-size:25px">📚</span><strong>سجل الفواتير</strong><span class="small">مراجعة الفواتير السابقة</span></button>
+  </div>
+  <div id="lowStockAlert" class="notice hidden"></div>
+</section>
+
+<section class="metrics">
+  <div class="metric"><div class="label">مبيعات اليوم</div><div class="value" id="todaySales">0.00 ج.م</div></div>
+  <div class="metric"><div class="label">عدد المنتجات</div><div class="value" id="productCount">0</div></div>
+  <div class="metric"><div class="label">عدد الفواتير</div><div class="value" id="invoiceCount">0</div></div>
+</section>
+
+<section id="salesView">
+  <div class="layout">
+    <div class="panel">
+      <h2>اختار المنتجات</h2>
+      <input id="searchProduct" type="search" placeholder="ابحث عن منتج بالاسم..." aria-label="ابحث عن منتج">
+      <div id="salesProducts" class="products"></div>
+    </div>
+    <div class="panel">
+      <h2>سلة البيع</h2>
+      <div id="cartList" class="cart-list"></div>
+      <div class="field"><label for="discount">الخصم بالنسبة المئوية (%)</label><input id="discount" type="number" min="0" max="100" step="1" value="0" placeholder="مثال: 10"></div><div class="small" id="discountValue" style="margin-top:-5px;margin-bottom:10px">قيمة الخصم: 0.00 ج.م</div>
+      <div class="field"><label for="paymentMethod">طريقة الدفع</label><select id="paymentMethod"><option value="نقدي">نقدي</option><option value="محفظة إلكترونية">محفظة إلكترونية</option><option value="بطاقة">بطاقة</option><option value="آجل / دين">آجل / دين</option></select></div>
+      <div class="field"><label for="amountPaid">المبلغ المدفوع من العميل (جنيه)</label><input id="amountPaid" type="number" min="0" step="0.01" value="0"></div>
+      <div class="row between" style="margin-bottom:12px"><span class="small">الباقي للعميل</span><strong id="changeDue">0.00 ج.م</strong></div>
+      <div class="total"><span>الإجمالي</span><span id="cartTotal">0.00 ج.م</span></div>
+      <button class="btn" id="completeSale" style="width:100%">تأكيد البيع وحفظ الفاتورة</button>
+      <button class="btn secondary" id="printLastSale" style="width:100%;margin-top:8px">طباعة آخر فاتورة</button>
+      <div class="notice">هذه النسخة تحفظ البيانات على هذا الجهاز فقط. لا تستخدمها بعدُ كسجل محاسبي وحيد لمحل حقيقي، فالنسخ الاحتياطي والمزامنة السحابية لم يُضافا بعد.</div>
+    </div>
+  </div>
+</section>
+
+<section id="productsView" class="hidden">
+  <div class="layout">
+    <div class="panel">
+      <h2>إضافة منتج جديد</h2>
+      <form id="productForm">
+        <div class="field"><label for="pName">اسم المنتج</label><input id="pName" required maxlength="80" placeholder="مثال: قلم أزرق"></div>
+        <div class="field"><label for="pPrice">سعر البيع (جنيه)</label><input id="pPrice" required type="number" min="0.01" step="0.01" placeholder="مثال: 15"></div>
+        <div class="field"><label for="pStock">الكمية المتاحة</label><input id="pStock" required type="number" min="0" step="1" placeholder="مثال: 20"></div>
+        <button class="btn" type="submit">إضافة المنتج</button>
+      </form>
+    </div>
+    <div class="panel">
+      <div class="row between"><h2>قائمة المنتجات</h2><button class="btn secondary" id="exportData">تصدير نسخة احتياطية</button></div>
+      <div id="inventoryTable" class="table-wrap"></div>
+      <div class="field" style="margin-top:14px"><label for="importFile">استعادة نسخة احتياطية JSON</label><input id="importFile" type="file" accept=".json,application/json"></div>
+    </div>
+  </div>
+</section>
+
+<section id="accountsView" class="hidden">
+  <section class="metrics">
+    <div class="metric"><div class="label">إجمالي المصروفات</div><div class="value" id="expenseTotal">0.00 ج.م</div></div>
+    <div class="metric"><div class="label">المبالغ المستحقة (ديون العملاء)</div><div class="value" id="debtTotal">0.00 ج.م</div></div>
+    <div class="metric"><div class="label">صافي تقديري بعد المصروفات</div><div class="value" id="netEstimate">0.00 ج.م</div></div>
+  </section>
+  <div class="layout">
+    <div class="panel">
+      <h2>تسجيل مصروف</h2>
+      <form id="expenseForm">
+        <div class="field"><label for="expenseName">بيان المصروف</label><input id="expenseName" required maxlength="100" placeholder="مثال: إيجار المحل"></div>
+        <div class="field"><label for="expenseAmount">المبلغ بالجنيه</label><input id="expenseAmount" type="number" min="0.01" step="0.01" required></div>
+        <button class="btn" type="submit">حفظ المصروف</button>
+      </form>
+      <div id="expenseList" class="table-wrap" style="margin-top:14px"></div>
+    </div>
+    <div class="panel">
+      <h2>الديون والمبالغ المستحقة</h2>
+      <p class="small">تُسجل المبيعات التي تختار لها طريقة الدفع «آجل / دين» هنا تلقائيًا.</p>
+      <div id="debtList" class="table-wrap"></div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:16px">
+    <h2>ملخص الحسابات</h2>
+    <div id="accountSummary" class="table-wrap"></div>
+    <div class="notice">الأرباح هنا تقديرية فقط؛ لحساب صافي الربح بدقة سنحتاج إضافة تكلفة شراء كل منتج. المبالغ المستحقة تُسجل، لكن تحصيل الدين وإغلاقه سنضيفهما في مرحلة لاحقة.</div>
+  </div>
+</section>
+
+
+<section id="historyView" class="hidden">
+  <div class="panel">
+    <div class="row between"><h2>سجل المبيعات</h2><button class="btn secondary" id="exportSales">تصدير سجل المبيعات</button></div>
+    <div id="salesHistory" class="table-wrap"></div>
+  </div>
+</section>
+
+<section id="settingsView" class="hidden">
+  <div class="layout">
+    <div class="panel">
+      <h2>تغيير اسم المستخدم وكلمة المرور</h2>
+      <p class="small">اكتب بيانات الدخول الحالية أولًا، ثم اختر اسم مستخدم وكلمة مرور جديدين.</p>
+      <form id="securityForm">
+        <div class="field"><label for="settingAppName">اسم البرنامج الظاهر</label><input id="settingAppName" maxlength="60" required value="مبيعاتي"></div>
+        <div class="field"><label for="currentPassword">كلمة المرور الحالية</label><input id="currentPassword" type="password" required autocomplete="current-password"></div>
+        <div class="field"><label for="newUsername">اسم المستخدم الجديد</label><input id="newUsername" required minlength="3" maxlength="40" autocomplete="username" placeholder="3 أحرف على الأقل"></div>
+        <div class="field"><label for="newPassword">كلمة المرور الجديدة</label><input id="newPassword" type="password" minlength="8" autocomplete="new-password" placeholder="8 أحرف على الأقل"></div>
+        <div class="field"><label for="confirmPassword">تأكيد كلمة المرور الجديدة</label><input id="confirmPassword" type="password" minlength="8" autocomplete="new-password"></div>
+        <button class="btn" type="submit">حفظ إعدادات الأمان</button>
+      </form>
+      <div class="notice">لأمان أفضل، استخدم كلمة مرور طويلة ولا تشاركها مع أحد. هذه الحماية محلية داخل المتصفح وليست بديلًا عن تسجيل دخول آمن على خادم.</div>
+    </div>
+    <div class="panel">
+      <h2>حالة الحماية</h2>
+      <p>اسم المستخدم الحالي: <strong id="currentUsernameLabel">—</strong></p>
+      <p class="small">يمكنك قفل البرنامج يدويًا من زر «قفل البرنامج». سيطلب اسم المستخدم وكلمة المرور عند فتحه مرة أخرى في نفس المتصفح.</p>
+      <button class="btn secondary" id="lockFromSettings" type="button">قفل البرنامج الآن</button>
+      <div class="notice">تنبيه مهم: لأن هذه النسخة تعمل بملف HTML محلي وتخزن البيانات في المتصفح، يمكن لشخص لديه خبرة أو وصول لملفات الجهاز تجاوز القفل. سنضيف حماية حقيقية وصلاحيات مستخدمين عند ربط Supabase وضبط سياسات الوصول.</div>
+    </div>
+  </div>
+</section>
+<footer>مبيعاتي — نسخة أولية للتجربة والتعلّم</footer>
+</div>
+
+<script>
+"use strict";
+const STORAGE_KEY = "mabe3aty_v1";
+const APP_NAME_KEY = "mabe3aty_app_name_v1";
+function applyAppName(){const name=localStorage.getItem(APP_NAME_KEY)||"مبيعاتي";document.title=name+" | برنامج المبيعات";const h=document.querySelector("header .brand h1");if(h)h.textContent=name;const a=document.querySelector("#authOverlay .brand h1");if(a)a.textContent=name;const field=document.getElementById("settingAppName");if(field)field.value=name;}
+const money = n => `${Number(n || 0).toLocaleString("ar-EG",{minimumFractionDigits:2,maximumFractionDigits:2})} ج.م`;
+const safe = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const todayKey = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+let state = {products:[],sales:[],expenses:[]};
+let cart = [];
+let hadSavedData = false;
+
+function loadState(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw){hadSavedData=true;const parsed=JSON.parse(raw);if(Array.isArray(parsed.products)&&Array.isArray(parsed.sales))state={products:parsed.products,sales:parsed.sales,expenses:Array.isArray(parsed.expenses)?parsed.expenses:[]};}
+  }catch(e){alert("تعذّر قراءة البيانات المحفوظة. صدّر نسخة احتياطية إذا كانت متاحة.");}
+}
+function saveState(){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+  catch(e){alert("تعذّر الحفظ. قد تكون مساحة المتصفح ممتلئة؛ صدّر نسخة احتياطية.");}
+}
+function renderMetrics(){
+  const total=state.sales.filter(s=>s.dateKey===todayKey()).reduce((sum,s)=>sum+s.total,0);
+  document.getElementById("todaySales").textContent=money(total);
+  document.getElementById("productCount").textContent=state.products.length;
+  document.getElementById("invoiceCount").textContent=state.sales.length;
+  const low=state.products.filter(p=>p.stock<=5);
+  const alertBox=document.getElementById("lowStockAlert");
+  alertBox.classList.toggle("hidden",low.length===0);
+  alertBox.textContent=low.length?"تنبيه مخزون منخفض: "+low.map(p=>`${p.name} (المتبقي ${p.stock})`).join("، "):"";
+  const expenses=state.expenses.reduce((n,x)=>n+x.amount,0);
+  const debts=state.sales.filter(x=>x.paymentMethod==="آجل / دين").reduce((n,x)=>n+Math.max(0,x.total-(x.amountPaid||0)),0);
+  document.getElementById("expenseTotal").textContent=money(expenses);
+  document.getElementById("debtTotal").textContent=money(debts);
+  document.getElementById("netEstimate").textContent=money(state.sales.reduce((n,x)=>n+x.total,0)-expenses);
+}
+function renderSalesProducts(){
+  const q=document.getElementById("searchProduct").value.trim().toLowerCase();
+  const list=state.products.filter(p=>p.name.toLowerCase().includes(q));
+  const el=document.getElementById("salesProducts");
+  if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">لا توجد منتجات. أضف منتجات من قسم المنتجات والمخزون.</div>';return;}
+  el.innerHTML=list.map(p=>`<div class="product"><div class="product-name">${safe(p.name)}</div><div class="price">${money(p.price)}</div><div class="small">المتاح: ${p.stock}</div><button class="btn" data-add="${p.id}" ${p.stock<1?"disabled":""}>إضافة للسلة</button></div>`).join("");
+}
+function renderCart(){
+  const el=document.getElementById("cartList");
+  if(!cart.length)el.innerHTML='<div class="empty">السلة فارغة — أضف منتجًا للبدء.</div>';
+  else el.innerHTML=cart.map(item=>`<div class="cart-item"><div class="info"><div><strong>${safe(item.name)}</strong></div><div class="small">${money(item.price)} × ${item.qty}</div></div><div class="qty"><button data-dec="${item.id}" aria-label="تقليل الكمية">−</button><span>${item.qty}</span><button data-inc="${item.id}" aria-label="زيادة الكمية">+</button></div></div>`).join("");
+  const subtotal=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const discountPercent=Math.min(100,Math.max(0,Number(document.getElementById("discount").value)||0));
+  const discountAmount=subtotal*discountPercent/100;
+  const total=Math.max(0,subtotal-discountAmount);
+  document.getElementById("discountValue").textContent=`قيمة الخصم (${discountPercent}%): ${money(discountAmount)}`;
+  document.getElementById("cartTotal").textContent=money(total);
+  const paid=Math.max(0,Number(document.getElementById("amountPaid").value)||0);
+  document.getElementById("changeDue").textContent=money(Math.max(0,paid-total));
+  document.getElementById("completeSale").disabled=!cart.length;
+}
+function renderInventory(){
+  const el=document.getElementById("inventoryTable");
+  if(!state.products.length){el.innerHTML='<div class="empty">لسه مفيش منتجات. أضف أول منتج من النموذج.</div>';return;}
+  el.innerHTML=`<table><thead><tr><th>المنتج</th><th>السعر</th><th>الكمية</th><th>إجراء</th></tr></thead><tbody>${state.products.map(p=>`<tr><td>${safe(p.name)}</td><td>${money(p.price)}</td><td>${p.stock}</td><td><button class="btn danger" data-delete="${p.id}">حذف</button></td></tr>`).join("")}</tbody></table>`;
+}
+function renderHistory(){
+  const el=document.getElementById("salesHistory");
+  if(!state.sales.length){el.innerHTML='<div class="empty">لا توجد مبيعات مسجلة حتى الآن.</div>';return;}
+  el.innerHTML=`<table><thead><tr><th>رقم الفاتورة</th><th>التاريخ</th><th>عدد القطع</th><th>الإجمالي</th></tr></thead><tbody>${[...state.sales].reverse().map(s=>`<tr><td>${safe(s.id)}</td><td>${safe(s.date)}</td><td>${s.items.reduce((n,i)=>n+i.qty,0)}</td><td>${money(s.total)}</td></tr>`).join("")}</tbody></table>`;
+}
+function renderAccounts(){
+  const expenseEl=document.getElementById("expenseList");
+  expenseEl.innerHTML=state.expenses.length?`<table><thead><tr><th>المصروف</th><th>المبلغ</th><th>التاريخ</th></tr></thead><tbody>${[...state.expenses].reverse().map(x=>`<tr><td>${safe(x.name)}</td><td>${money(x.amount)}</td><td>${safe(x.date)}</td></tr>`).join("")}</tbody></table>`:'<div class="empty">لا توجد مصروفات مسجلة.</div>';
+  const debts=state.sales.filter(x=>x.paymentMethod==="آجل / دين"&&x.total>(x.amountPaid||0));
+  document.getElementById("debtList").innerHTML=debts.length?`<table><thead><tr><th>الفاتورة</th><th>الإجمالي</th><th>المدفوع</th><th>المستحق</th></tr></thead><tbody>${debts.map(x=>`<tr><td>${safe(x.id)}</td><td>${money(x.total)}</td><td>${money(x.amountPaid||0)}</td><td>${money(x.total-(x.amountPaid||0))}</td></tr>`).join("")}</tbody></table>`:'<div class="empty">لا توجد ديون مسجلة.</div>';
+  const salesTotal=state.sales.reduce((n,x)=>n+x.total,0);
+  const todayTotal=state.sales.filter(x=>x.dateKey===todayKey()).reduce((n,x)=>n+x.total,0);
+  const expenseTotal=state.expenses.reduce((n,x)=>n+x.amount,0);
+  document.getElementById("accountSummary").innerHTML=`<table><tbody><tr><th>مبيعات اليوم</th><td>${money(todayTotal)}</td></tr><tr><th>إجمالي المبيعات المسجلة</th><td>${money(salesTotal)}</td></tr><tr><th>إجمالي المصروفات</th><td>${money(expenseTotal)}</td></tr><tr><th>صافي تقديري قبل تكلفة البضاعة</th><td>${money(salesTotal-expenseTotal)}</td></tr></tbody></table>`;
+}
+function renderAll(){renderMetrics();renderSalesProducts();renderCart();renderInventory();renderHistory();renderAccounts();}
+
+document.querySelectorAll(".tab[data-view]").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b===btn));
+  ["sales","products","history","accounts","settings"].forEach(v=>document.getElementById(v+"View").classList.toggle("hidden",v!==btn.dataset.view));
+}));
+document.querySelectorAll("[data-go]").forEach(btn=>btn.addEventListener("click",()=>{
+  const target=btn.dataset.go;
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.view===target));
+  ["sales","products","history","accounts","settings"].forEach(v=>document.getElementById(v+"View").classList.toggle("hidden",v!==target));
+  window.scrollTo({top:0,behavior:"smooth"});
+}));
+document.getElementById("searchProduct").addEventListener("input",renderSalesProducts);
+document.getElementById("discount").addEventListener("input",e=>{if(Number(e.target.value)>100)e.target.value="100";if(Number(e.target.value)<0)e.target.value="0";renderCart();});
+document.getElementById("amountPaid").addEventListener("input",renderCart);
+document.getElementById("salesProducts").addEventListener("click",e=>{
+  const btn=e.target.closest("[data-add]");if(!btn)return;
+  const p=state.products.find(p=>p.id===btn.dataset.add);if(!p||p.stock<1)return;
+  const existing=cart.find(i=>i.id===p.id);
+  if(existing){if(existing.qty>=p.stock){alert("الكمية المطلوبة أكبر من المخزون المتاح.");return;}existing.qty++;}
+  else cart.push({id:p.id,name:p.name,price:p.price,qty:1});
+  renderCart();
+});
+document.getElementById("cartList").addEventListener("click",e=>{
+  const inc=e.target.closest("[data-inc]"),dec=e.target.closest("[data-dec]");
+  if(!inc&&!dec)return;
+  const id=(inc||dec).dataset.inc||(inc||dec).dataset.dec;
+  const item=cart.find(i=>i.id===id),p=state.products.find(p=>p.id===id);if(!item)return;
+  if(inc){if(item.qty>=p.stock){alert("لا توجد كمية إضافية في المخزون.");return;}item.qty++;}
+  else{item.qty--;if(item.qty<=0)cart=cart.filter(i=>i.id!==id);}
+  renderCart();
+});
+document.getElementById("productForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=document.getElementById("pName").value.trim();
+  const price=Number(document.getElementById("pPrice").value);
+  const stock=Number(document.getElementById("pStock").value);
+  if(!name||!Number.isFinite(price)||price<=0||!Number.isInteger(stock)||stock<0){alert("راجع اسم المنتج والسعر والكمية.");return;}
+  state.products.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),name,price,stock});
+  saveState();e.target.reset();renderAll();alert("تمت إضافة المنتج.");
+});
+document.getElementById("completeSale").addEventListener("click",()=>{
+  if(!cart.length)return;
+  for(const item of cart){const p=state.products.find(p=>p.id===item.id);if(!p||p.stock<item.qty){alert(`الكمية المتاحة من ${item.name} تغيّرت. راجع السلة.`);return;}}
+  const subtotal=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const discountPercent=Number(document.getElementById("discount").value)||0;
+  if(discountPercent<0||discountPercent>100){alert("نسبة الخصم يجب أن تكون بين 0 و100%.");return;}
+  const discount=subtotal*discountPercent/100;
+  const now=new Date();
+  const paymentMethod=document.getElementById("paymentMethod").value;
+  const amountPaid=Math.max(0,Number(document.getElementById("amountPaid").value)||0);
+  const sale={id:"INV-"+now.getTime(),date:now.toLocaleString("ar-EG"),dateKey:todayKey(),items:cart.map(i=>({...i})),subtotal,discountPercent,discount,total:subtotal-discount,paymentMethod,amountPaid,change:Math.max(0,amountPaid-(subtotal-discount))};
+  sale.items.forEach(item=>{state.products.find(p=>p.id===item.id).stock-=item.qty;});
+  state.sales.push(sale);cart=[];document.getElementById("discount").value="0";document.getElementById("amountPaid").value="0";saveState();renderAll();alert(`تم حفظ الفاتورة ${sale.id}\nالإجمالي: ${money(sale.total)}\nطريقة الدفع: ${sale.paymentMethod}`);
+});
+document.getElementById("inventoryTable").addEventListener("click",e=>{
+  const btn=e.target.closest("[data-delete]");if(!btn)return;
+  const p=state.products.find(p=>p.id===btn.dataset.delete);if(!p)return;
+  if(!confirm(`هل تريد حذف المنتج "${p.name}"؟ لن تتأثر الفواتير القديمة.`))return;
+  state.products=state.products.filter(p=>p.id!==btn.dataset.delete);
+  cart=cart.filter(i=>i.id!==btn.dataset.delete);saveState();renderAll();
+});
+function downloadJSON(filename,data){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
+}
+document.getElementById("expenseForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=document.getElementById("expenseName").value.trim();
+  const amount=Number(document.getElementById("expenseAmount").value);
+  if(!name||!Number.isFinite(amount)||amount<=0){alert("أدخل بيان المصروف ومبلغًا صحيحًا.");return;}
+  state.expenses.push({id:String(Date.now()),name,amount,date:new Date().toLocaleString("ar-EG")});
+  saveState();e.target.reset();renderAll();alert("تم حفظ المصروف.");
+});
+function printSale(sale){
+  if(!sale){alert("لا توجد فاتورة للطباعة حتى الآن.");return;}
+  const win=window.open("","_blank","width=420,height=650");
+  if(!win){alert("المتصفح منع نافذة الطباعة. اسمح بالنوافذ المنبثقة ثم حاول مجددًا.");return;}
+  const rows=sale.items.map(i=>`<tr><td>${safe(i.name)}</td><td>${i.qty}</td><td>${money(i.price*i.qty)}</td></tr>`).join("");
+  win.document.write(`<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>فاتورة ${safe(sale.id)}</title><style>body{font-family:Tahoma,Arial;padding:18px;color:#111}h2,p{text-align:center}table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #ddd;padding:8px;text-align:right}.sum{margin-top:16px;line-height:2}</style><h2>مبيعاتي</h2><p>فاتورة بيع</p><p>${safe(sale.id)}<br>${safe(sale.date)}</p><table><thead><tr><th>المنتج</th><th>الكمية</th><th>الإجمالي</th></tr></thead><tbody>${rows}</tbody></table><div class="sum">الإجمالي قبل الخصم: ${money(sale.subtotal)}<br>الخصم (${Number(sale.discountPercent??(sale.subtotal?100*sale.discount/sale.subtotal:0)).toFixed(1)}%): ${money(sale.discount)}<br><strong>الإجمالي النهائي: ${money(sale.total)}</strong><br>طريقة الدفع: ${safe(sale.paymentMethod)}<br>المدفوع: ${money(sale.amountPaid)}<br>الباقي للعميل: ${money(sale.change)}</div><p>شكرًا لزيارتكم</p><script>window.onload=()=>window.print()<\/script></html>`);
+  win.document.close();
+}
+document.getElementById("printLastSale").addEventListener("click",()=>printSale(state.sales[state.sales.length-1]));
+document.getElementById("exportData").addEventListener("click",()=>downloadJSON("mabe3aty-backup.json",state));
+document.getElementById("exportSales").addEventListener("click",()=>downloadJSON("mabe3aty-sales.json",state.sales));
+document.getElementById("importFile").addEventListener("change",async e=>{
+  const file=e.target.files[0];if(!file)return;
+  try{
+    const imported=JSON.parse(await file.text());
+    if(!Array.isArray(imported.products)||!Array.isArray(imported.sales))throw new Error("invalid");
+    if(!confirm("سيتم استبدال البيانات الحالية بمحتويات النسخة الاحتياطية. هل تريد المتابعة؟"))return;
+    state=imported;cart=[];saveState();renderAll();alert("تم استرجاع النسخة الاحتياطية.");
+  }catch(err){alert("الملف غير صالح أو لا يحتوي على نسخة مبيعاتي.");}
+  finally{e.target.value="";}
+});
+// حماية محلية تجريبية: تخزين بصمة كلمة المرور بدل تخزينها كنص واضح.
+const AUTH_KEY = "mabe3aty_auth_v1";
+let authConfig = null;
+let setupMode = false;
+async function passwordDigest(password, salt) {
+  const data = new TextEncoder().encode(`${salt}:${password}`);
+  if (window.crypto && crypto.subtle) {
+    const hash = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  }
+  // بديل للتوافق فقط؛ لا يُعد حماية قوية.
+  let h=2166136261; for(const b of data){h^=b;h=Math.imul(h,16777619);} return (h>>>0).toString(16);
+}
+function readAuth(){try{return JSON.parse(localStorage.getItem(AUTH_KEY)||"null");}catch{return null;}}
+function showAuth(){
+  authConfig=readAuth(); setupMode=!authConfig;
+  document.getElementById("authOverlay").style.display="flex";
+  document.getElementById("authSubtitle").textContent=setupMode?"إعداد حماية البرنامج":"تسجيل الدخول";
+  document.getElementById("authMessage").textContent=setupMode?"أنشئ اسم مستخدم وكلمة مرور للمدير. ستحتاجهما كل مرة تفتح فيها البرنامج.":"أدخل اسم المستخدم وكلمة المرور لفتح مبيعاتي.";
+  document.getElementById("authConfirmWrap").classList.toggle("hidden",!setupMode);
+  document.getElementById("authConfirm").required=setupMode;
+  document.getElementById("authSubmit").textContent=setupMode?"إنشاء حساب المدير":"دخول";
+  document.getElementById("authUsername").value="";document.getElementById("authPassword").value="";document.getElementById("authConfirm").value="";
+  document.body.classList.add("locked");
+}
+function unlockApp(){document.getElementById("authOverlay").style.display="none";document.body.classList.remove("locked");document.getElementById("currentUsernameLabel").textContent=authConfig.username;}
+function lockApp(){showAuth();}
+document.getElementById("authForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const username=document.getElementById("authUsername").value.trim();
+  const password=document.getElementById("authPassword").value;
+  if(username.length<3){alert("اسم المستخدم لازم يكون 3 أحرف على الأقل.");return;}
+  if(password.length<8){alert("كلمة المرور لازم تكون 8 أحرف على الأقل.");return;}
+  if(setupMode){
+    if(password!==document.getElementById("authConfirm").value){alert("تأكيد كلمة المرور غير مطابق.");return;}
+    const salt=Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,"0")).join("");
+    authConfig={username,salt,passwordHash:await passwordDigest(password,salt)};localStorage.setItem(AUTH_KEY,JSON.stringify(authConfig));unlockApp();
+  }else{
+    const candidate=await passwordDigest(password,authConfig.salt);
+    if(username!==authConfig.username||candidate!==authConfig.passwordHash){alert("اسم المستخدم أو كلمة المرور غير صحيحين.");return;}
+    unlockApp();
+  }
+});
+document.getElementById("securityForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const current=document.getElementById("currentPassword").value;
+  const newUser=document.getElementById("newUsername").value.trim();
+  const newPass=document.getElementById("newPassword").value;
+  const confirmPass=document.getElementById("confirmPassword").value;
+  if(await passwordDigest(current,authConfig.salt)!==authConfig.passwordHash){alert("كلمة المرور الحالية غير صحيحة.");return;}
+  if(newUser.length<3){alert("اسم المستخدم لازم يكون 3 أحرف على الأقل.");return;}
+  if(newPass && newPass.length<8){alert("كلمة المرور الجديدة لازم تكون 8 أحرف على الأقل.");return;}
+  if(newPass!==confirmPass){alert("تأكيد كلمة المرور الجديدة غير مطابق.");return;}
+  if(newPass){const salt=Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,"0")).join("");authConfig={username:newUser,salt,passwordHash:await passwordDigest(newPass,salt)};}
+  else authConfig={...authConfig,username:newUser};
+  localStorage.setItem(AUTH_KEY,JSON.stringify(authConfig));localStorage.setItem(APP_NAME_KEY,document.getElementById("settingAppName").value.trim()||"مبيعاتي");applyAppName();document.getElementById("currentPassword").value="";document.getElementById("newPassword").value="";document.getElementById("confirmPassword").value="";document.getElementById("currentUsernameLabel").textContent=authConfig.username;alert("تم تحديث إعدادات الدخول.");
+});
+document.getElementById("lockApp").addEventListener("click",lockApp);
+document.getElementById("lockFromSettings").addEventListener("click",lockApp);
+
+loadState();
+if(!hadSavedData){
+  state.products=[
+    {id:"demo-001",name:"مياه معدنية",price:10,stock:30},
+    {id:"demo-002",name:"قلم أزرق",price:8,stock:25},
+    {id:"demo-003",name:"كشكول 60 ورقة",price:25,stock:18},
+    {id:"demo-004",name:"مناديل ورقية",price:15,stock:12},
+    {id:"demo-005",name:"شاحن USB تجريبي",price:120,stock:7},
+    {id:"demo-006",name:"كيس تسوق",price:3,stock:50}
+  ];
+  saveState();
+}
+renderAll();
+applyAppName();
+showAuth();
+</script>
+
+<script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(err => console.warn("Service worker registration failed", err));
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "id": "./",
+  "name": "مبيعاتي - برنامج المبيعات",
+  "short_name": "مبيعاتي",
+  "description": "برنامج مبيعات وإدارة مخزون للمحلات",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#1769e0",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
